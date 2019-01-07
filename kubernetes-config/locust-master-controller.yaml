@@ -33,12 +33,12 @@ spec:
     spec:
       containers:
         - name: locust
-          image: gcr.io/cloud-solutions-images/locust-tasks:latest
+          image: gcr.io/razor-200806/locust-tasks:latest
           env:
             - name: LOCUST_MODE
               value: master
             - name: TARGET_HOST
-              value: http://workload-simulation-webapp.appspot.com
+              value: http://razor-200806.appspot.com
           ports:
             - name: loc-master-web
               containerPort: 8089

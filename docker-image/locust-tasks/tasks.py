@@ -16,27 +16,27 @@
 
 
 import uuid
-
 from datetime import datetime
 from locust import HttpLocust, TaskSet, task
 
 
 class MetricsTaskSet(TaskSet):
-    _deviceid = None
-
-    def on_start(self):
-        self._deviceid = str(uuid.uuid4())
 
     @task(1)
-    def login(self):
-        self.client.post(
-            '/login', {"deviceid": self._deviceid})
+    def getMinVersion(self):
+        self.client.headers.update(
+            {'Authorization': 'Basic MjA0Mjk3Nzg4ODo1OGJhMWU2MC0xMjhlLTQyNTAtYTk3Mi05MzFkYTJlM2RmZjQ=', 'User-Agent': 'com.razor.razor'})
+        self.client.get('/api/v1/min_version/android')
 
-    @task(999)
-    def post_metrics(self):
+    @task(2)
+    def login(self):
+        self.client.headers.update(
+            {'content-type': 'application/json', 'User-Agent': 'com.razor.razor'})
         self.client.post(
-            "/metrics", {"deviceid": self._deviceid, "timestamp": datetime.now()})
+            '/api/v1/login', json={"phone": "2042977888", "password": "58ba1e60-128e-4250-a972-931da2e3dff4"})
 
 
 class MetricsLocust(HttpLocust):
     task_set = MetricsTaskSet
+    min_wait = 500
+    max_wait = 1500

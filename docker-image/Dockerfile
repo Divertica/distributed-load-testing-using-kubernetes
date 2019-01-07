@@ -16,8 +16,6 @@
 # Start with a base Python 2.7.8 image
 FROM python:2.7.8
 
-MAINTAINER Sandeep Parikh <parikhs@google.com>
-
 # Add the licenses for third party software and libraries
 ADD licenses /licenses
 
@@ -34,4 +32,4 @@ EXPOSE 5557 5558 8089
 RUN chmod 755 /locust-tasks/run.sh
 
 # Start Locust using LOCUS_OPTS environment variable
-ENTRYPOINT ["/locust-tasks/run.sh"] 
+ENTRYPOINT ["/locust-tasks/run.sh"]

@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 kind: ReplicationController
 apiVersion: v1
 metadata:
@@ -40,4 +39,4 @@ spec:
             - name: LOCUST_MASTER
               value: locust-master
             - name: TARGET_HOST
-              value: http://razor-200806.appspot.com
+              value: https://staging-dot-razor-200806.appspot.com

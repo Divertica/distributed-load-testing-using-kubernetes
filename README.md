@@ -1,19 +1,47 @@
+## Razor Scooter Share Load Testing Quickstart
+
+Below this quickstart are the full instructions for getting the load tester up and running. If you want the TLDR, here it is.
+
+### Running locally
+
+Running this locally is handy for quick tests; it won't be able to simulate as many total users but given a baseline test it should provide some insight into the potential effect of backend changes.
+
+1. Install [Locust](https://docs.locust.io/en/stable/installation.html)
+1. Run the command `locust -f docker-image/locust-tasks/tasks.py --host=https://staging-dot-razor-200806.appspot.com`, changing the `host` to whichever instance you want to test
+1. Navigate to `http://localhost:8089` and start the test
+
+### Running distributed
+
+Distributed testing will let you create a bigger swarm of users, so test responsibly! I've included the setup and teardown steps, so that the cluster isn't left running when it's not needed and additional costs aren't incurred.
+
+1. Check `locust-master-service.yaml` and `locust-worker-controller.yaml` in the `kubernetes-config` directory to make sure they're pointing at the backend instance you want to test
+1. Build and upload the Docker image: `gcloud container builds submit --tag gcr.io/razor-200806/locust-tasks:latest docker-image/.`.
+1. Create the engine cluster: `gcloud container clusters create load-test`.
+1. Deploy `locust-master-controller`: `kubectl create -f locust-master-controller.yaml`.
+1. Deploy `locust-master-service`: `kubectl create -f locust-master-service.yaml`.
+1. Get the publicly accessible IP: `kubectl get svc locust-master`.
+1. Deploy `locust-worker-controller`: `kubectl create -f locust-worker-controller.yaml`.
+1. You can check to see if the workers are ready using: `kubectl get pods -l name=locust,role=worker`.
+1. Navigate to port `8089` of the publicly accessible IP obtained from the step above
+1. Test!
+1. Teardown: `gcloud container clusters delete load-test`
+
 ## Distributed Load Testing Using Kubernetes
 
 This tutorial demonstrates how to conduct distributed load testing using [Kubernetes](http://kubernetes.io) and includes a sample web application, Docker image, and Kubernetes controllers/services. For more background refer to the [Distributed Load Testing Using Kubernetes](http://cloud.google.com/solutions/distributed-load-testing-using-kubernetes) solution paper.
 
 ## Prerequisites
 
-* Google Cloud Platform account
-* Install and setup [Google Cloud SDK](https://cloud.google.com/sdk/)
+- Google Cloud Platform account
+- Install and setup [Google Cloud SDK](https://cloud.google.com/sdk/)
 
 **Note:** when installing the Google Cloud SDK you will need to enable the following additional components:
 
-* `App Engine Command Line Interface`
-* `App Engine SDK for Python and PHP`
-* `Compute Engine Command Line Interface`
-* `gcloud app Python Extensions`
-* `kubectl`
+- `App Engine Command Line Interface`
+- `App Engine SDK for Python and PHP`
+- `Compute Engine Command Line Interface`
+- `gcloud app Python Extensions`
+- `kubectl`
 
 Before continuing, you can also set your preferred zone and project:
 
@@ -59,7 +87,7 @@ If you uploaded your Docker image to the Docker Hub:
 
 ### Deploy Kubernetes Cluster
 
-First create the [Google Kubernetes Engine](http://cloud.google.com/kubernetes-engine) cluster using the `gcloud` command as shown below. 
+First create the [Google Kubernetes Engine](http://cloud.google.com/kubernetes-engine) cluster using the `gcloud` command as shown below.
 
     $ gcloud container clusters create CLUSTER-NAME
 
